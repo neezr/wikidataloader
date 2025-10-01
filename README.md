@@ -8,10 +8,10 @@ It does not support complex operators (ordering, datetime conversion, string/num
 
 ## Usage
 
-Look up the IDs for properties (e.g. _P31_) and objects (e.g. _Q5_) on [Wikidata](https://www.wikidata.org/).
+Look up the URIs for properties (e.g. _P31_) and objects (e.g. _Q5_) on [Wikidata](https://www.wikidata.org/).
 
 ```python
-from wikidatasets import WikidataQuery
+from wikidataframes import WikidataQuery
 
 results = WikidataQuery.search(
     filters={"P31": "Q5", "P27": "Q183", "P106": "Q156839"}, # {is_instance:human, country_of_origin:Germany, profession:cook}
@@ -24,11 +24,13 @@ results.to_pandas()
 
 ```
 
+For more examples, see [example.ipynb](./example.ipynb)
+
 ## Install
 
 Install using pip:
 
-```pip install wikidatasets```
+```pip install wikidataframes```
 
 ## Limitations
 
