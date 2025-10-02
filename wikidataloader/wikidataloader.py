@@ -1,3 +1,7 @@
+"""
+This module provides an easy pythonic wrapper around the Wikidata SPARQL API (https://query.wikidata.org/) for quick creation of simple datasets from Wikidata.
+"""
+
 import requests
 import pandas as pd
 

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wikidataloader"
+version = "0.0.1"
+authors = [
+  { name="Nizar", email="nizar.neezr@web.de" },
+]
+description = "Pythonic wrapper around the Wikidata SPARQL API for quick creation of datasets from Wikidata"
+keywords = ["dataset", "wikidata", "sparql"]
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+license = "GPLv3"
+license-files = ["LICEN[CS]E.*"]
+dependencies = [
+  "requests",
+  "pandas"
+]
+
+[project.urls]
+Homepage = "https://github.com/neezr/wikidataloader"
+Issues = "https://github.com/neezr/wikidataloader/issues"
+Repository = "https://github.com/neezr/wikidataloader.git"
+Download = "https://github.com/neezr/wikidataloader/archive/v_01.tar.gz"
+
+[tool.setuptools]
+packages = ["wikidataloader"]
+include-package-data = true
+
