@@ -2,10 +2,15 @@
 This module provides an easy pythonic wrapper around the Wikidata SPARQL API (https://query.wikidata.org/) for quick creation of simple datasets from Wikidata.
 """
 
+import warnings
+import re
 import requests
 import pandas as pd
 
 class WikidataQuery:
+    REGEX_PROPERTY = re.compile(r"P\d+")
+    REGEX_ITEM = re.compile(r"Q\d+")
+
     def __init__(self, query: str, _df: pd.DataFrame):
         self.query: str = query
         self._df: pd.DataFrame = _df
@@ -40,13 +45,23 @@ class WikidataQuery:
         where_statement = "WHERE{\n"
 
         for filter_property, filter_value in filters.items():
+            if not re.match(cls.REGEX_PROPERTY, filter_property):
+                warnings.warn(f"Property '{filter_property}' is not in Wikidata URI format (P\\d+).")
+            if not re.match(cls.REGEX_ITEM, filter_value):
+                warnings.warn(f"Item '{filter_value}' is not in Wikidata URI format (Q\\d+).")
             where_statement += f"?item wdt:{filter_property} wd:{filter_value} .\n"
 
         if negative_filters:
             for filter_property, filter_value in negative_filters.items():
+                if not re.match(cls.REGEX_PROPERTY, filter_property):
+                    warnings.warn(f"Property '{filter_property}' is not in Wikidata URI format (P\\d+).")
+                if not re.match(cls.REGEX_ITEM, filter_value):
+                    warnings.warn(f"Item '{filter_value}' is not in Wikidata URI format (Q\\d+).")
                 where_statement += "FILTER NOT EXISTS{?item wdt:" + filter_property + " wd:" + filter_value + " .}\n"
         
         for select_property, select_column_name in select:
+            if not re.match(cls.REGEX_PROPERTY, select_property):
+                warnings.warn(f"Property '{select_property}' is not in Wikidata URI format (P\\d+).")
             where_statement += "OPTIONAL{?item wdt:" + select_property + " ?" + select_column_name.replace(' ', '_') + " .}\n"
 
         
