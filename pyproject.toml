@@ -9,7 +9,7 @@ authors = [
   { name="Nizar", email="nizar.neezr@web.de" },
 ]
 description = "Pythonic wrapper around the Wikidata SPARQL API for quick creation of datasets from Wikidata"
-keywords = ["dataset", "wikidata", "sparql"]
+keywords = ["datasets", "wikidata", "sparql"]
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
@@ -19,7 +19,7 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-license = "GPLv3"
+license = "GPL-3.0-or-later"
 license-files = ["LICEN[CS]E.*"]
 dependencies = [
   "requests",

@@ -127,7 +127,7 @@ class WikidataQuery:
 
         data = []
         for row in response["results"]["bindings"]:
-            row_item = {col: row.get(col, {}).get('value', None) for col in column_names}
+            row_item = {col: row.get(col, {}).get("value", None) for col in column_names}
             data.append(row_item)
 
         return pd.DataFrame(data)
