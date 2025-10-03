@@ -17,7 +17,7 @@ results = WikidataQuery.search(
     filters={"P31": "Q5", "P27": "Q183", "P106": "Q156839"}, # {is_instance: human, country_of_origin: Germany, profession: cook}
     select=[("P21", "Gender"), ("P19", "City of Birth")],
     limit=30,
-	default_language="en"
+    default_language="en"
 )
 
 results.to_pandas()
