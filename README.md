@@ -13,14 +13,30 @@ Look up the URIs for properties (e.g. _P31_) and objects (e.g. _Q5_) on [Wikidat
 ```python
 from wikidataloader import WikidataQuery
 
-results = WikidataQuery.search(
-    filters={"P31": "Q5", "P27": "Q183", "P106": "Q156839"}, # {is_instance: human, country_of_origin: Germany, profession: cook}
-    select=[("P21", "Gender"), ("P19", "City of Birth")],
-    limit=30,
-    default_language="en"
-)
+# Linguists from Germany with birth places and gender
 
-results.to_pandas()
+results = WikidataQuery.search(
+    # {is_instance:human, country_of_origin:Germany, profession:linguist}
+    filters={"P31": "Q5", "P27": "Q183", "P106": "Q14467526"}, 
+
+    # selects the properties "Gender" and "Birth Place" as columns in the dataframe and names them "Gender" and "City of Birth"
+    select=[("P21", "Gender"), ("P19", "City of Birth")],
+
+    # returns a maximum of 5 results
+    limit=5,
+
+    # retrieves labels in English, if available
+    default_language="en" 
+).to_pandas()
+
+results
+
+>>>                                    item Gender        City_of_Birth
+>>> 0                        Hermann Weller   male     Schwäbisch Gmünd
+>>> 1                             Hans Wehr   male              Leipzig
+>>> 2                       Theodor Haecker   male            Mulfingen
+>>> 3                   Gottfried Bernhardy   male  Gorzów Wielkopolski
+>>> 4                    Wilhelm Streitberg   male   Rüdesheim am Rhein
 
 ```
 

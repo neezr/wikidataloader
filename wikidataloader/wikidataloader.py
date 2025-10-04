@@ -16,13 +16,14 @@ class WikidataQuery:
         self._df: pd.DataFrame = _df
 
     @classmethod
-    def search(cls, filters: dict, select: list[str, str] | None = None, negative_filters: dict | None = None, default_language: str = "[AUTO_LANGUAGE]", limit: int | None = None):
+    def search(cls, filters: dict, select: list[str, str] | None = None, negative_filters: dict | None = None, required_properties: set | None = None, default_language: str = "[AUTO_LANGUAGE]", limit: int | None = None):
         """
         Creates a SPARQL query and creates a WikidataQuery object based on the response from Wikidata.
 
         :param filters: Dictionary of properties and the corresponding values that the selected items should have. For example {"P31": "Q3624078", "P30": "Q15"}. Please use the URIs from Wikidata.
         :param select: List of tuples of properties that should be returned as columns in the DataFrame. The first element of the tuple should be the URI from Wikidata, the second element should be a name for the column. For example: [("P36", "Capital"), ("P37", "Languages"), ("P625", "Coordinates")]. The title/name of the item itself will always be part of the filters and should not be explicitly added here. Default is None.
         :param negative_filters: Dictionary of properties and the corresponding values that the selected items should not have. For example {"P31": "Q3624078", "P30": "Q15"}. Please use the URIs from Wikidata. Default is None, which does not exclude any elements.
+        :param required_properties: Set of properties retrieved by 'select' that cannot be None. Default is None, which means no property is required.
         :param default_language: Default language for the label service. Default is "[AUTO_LANGUAGE]", which defaults to the language of your operating system.
         :param limit: Maximum number of results. If None, this will return all results. Default is None.
 
@@ -59,10 +60,15 @@ class WikidataQuery:
                     warnings.warn(f"Item '{filter_value}' is not in Wikidata URI format (Q\\d+).")
                 where_statement += "FILTER NOT EXISTS{?item wdt:" + filter_property + " wd:" + filter_value + " .}\n"
         
+        required_properties = required_properties or set()
         for select_property, select_column_name in select:
             if not re.match(cls.REGEX_PROPERTY, select_property):
                 warnings.warn(f"Property '{select_property}' is not in Wikidata URI format (P\\d+).")
-            where_statement += "OPTIONAL{?item wdt:" + select_property + " ?" + select_column_name.replace(' ', '_') + " .}\n"
+            
+            if select_property in required_properties:
+                where_statement += "?item wdt:" + select_property + " ?" + select_column_name.replace(' ', '_') + " .\n"
+            else:
+                where_statement += "OPTIONAL{?item wdt:" + select_property + " ?" + select_column_name.replace(' ', '_') + " .}\n"
 
         
         where_statement += 'SERVICE wikibase:label { bd:serviceParam wikibase:language "' + default_language + ',[AUTO_LANGUAGE],mul,fr,ar,be,bg,bn,ca,cs,da,de,el,en,es,et,fa,fi,he,hi,hu,hy,id,it,ja,jv,ko,nb,nl,eo,pa,pl,pt,ro,ru,sh,sk,sr,sv,sw,te,th,tr,uk,yue,vec,vi,zh". }\n'
@@ -148,5 +154,5 @@ class WikidataQuery:
         return pd.DataFrame(data)
 
     def __repr__(self):
-        return self._df.__repr__() + "(Wikidata Results)"
+        return self._df.__repr__() + "\n\n(Wikidata Results)"
 
