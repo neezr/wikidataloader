@@ -8,6 +8,11 @@ import requests
 import pandas as pd
 
 class WikidataQuery:
+    """
+    Sends a SPARQL query to the Wikidata API and stores the result as a pandas DataFrame.
+
+    Instantiate with the class methods WikidataQuery.search() or WikidataQuery.from_sparql_query().
+    """
     REGEX_PROPERTY = re.compile(r"P\d+")
     REGEX_ITEM = re.compile(r"Q\d+")
 
@@ -16,7 +21,7 @@ class WikidataQuery:
         self._df: pd.DataFrame = _df
 
     @classmethod
-    def search(cls, filters: dict, select: list[str, str] | None = None, negative_filters: dict | None = None, required_properties: set | None = None, default_language: str = "[AUTO_LANGUAGE]", limit: int | None = None):
+    def search(cls, filters: dict, select: list[str, str] | None = None, negative_filters: dict | None = None, required_properties: set | None = None, retrieve_lexicographical_information: bool = False, default_language: str = "[AUTO_LANGUAGE]", limit: int | None = None):
         """
         Creates a SPARQL query and creates a WikidataQuery object based on the response from Wikidata.
 
@@ -24,6 +29,7 @@ class WikidataQuery:
         :param select: List of tuples of properties that should be returned as columns in the DataFrame. The first element of the tuple should be the URI from Wikidata, the second element should be a name for the column. For example: [("P36", "Capital"), ("P37", "Languages"), ("P625", "Coordinates")]. The title/name of the item itself will always be part of the filters and should not be explicitly added here. Default is None.
         :param negative_filters: Dictionary of properties and the corresponding values that the selected items should not have. For example {"P31": "Q3624078", "P30": "Q15"}. Please use the URIs from Wikidata. Default is None, which does not exclude any elements.
         :param required_properties: Set of properties retrieved by 'select' that cannot be None. Default is None, which means no property is required.
+        :param retrieve_lexicographical_information: If true, retrieves the lexicographical properties "lemma", "language" and "lexical_category". Only use this, if you expect your data to be Lexemes instead of Items. Default is False.
         :param default_language: Default language for the label service. Default is "[AUTO_LANGUAGE]", which defaults to the language of your operating system.
         :param limit: Maximum number of results. If None, this will return all results. Default is None.
 
@@ -38,6 +44,10 @@ class WikidataQuery:
         # SELECT
         select = select or []
         select_statement = "SELECT DISTINCT ?itemLabel "
+
+        if retrieve_lexicographical_information:
+            select_statement += "?lemma ?languageLabel ?lexical_categoryLabel "
+
         for _, select_column_name in select:
             select_statement += f"?{select_column_name.replace(' ', '_')}Label "
         sparql_query.append(select_statement)
@@ -69,6 +79,9 @@ class WikidataQuery:
                 where_statement += "?item wdt:" + select_property + " ?" + select_column_name.replace(' ', '_') + " .\n"
             else:
                 where_statement += "OPTIONAL{?item wdt:" + select_property + " ?" + select_column_name.replace(' ', '_') + " .}\n"
+
+        if retrieve_lexicographical_information:
+            where_statement += """OPTIONAL{?item wikibase:lemma ?lemma} \nOPTIONAL{?item dct:language ?language} \nOPTIONAL{?item wikibase:lexicalCategory ?lexical_category}\n"""
 
         
         where_statement += 'SERVICE wikibase:label { bd:serviceParam wikibase:language "' + default_language + ',[AUTO_LANGUAGE],mul,fr,ar,be,bg,bn,ca,cs,da,de,el,en,es,et,fa,fi,he,hi,hu,hy,id,it,ja,jv,ko,nb,nl,eo,pa,pl,pt,ro,ru,sh,sk,sr,sv,sw,te,th,tr,uk,yue,vec,vi,zh". }\n'

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wikidataloader"
-version = "0.0.4"
+version = "0.0.5"
 authors = [
   { name="Nizar", email="nizar.neezr@web.de" },
 ]
@@ -30,7 +30,6 @@ dependencies = [
 Homepage = "https://github.com/neezr/wikidataloader"
 Issues = "https://github.com/neezr/wikidataloader/issues"
 Repository = "https://github.com/neezr/wikidataloader.git"
-Download = "https://github.com/neezr/wikidataloader/archive/v_01.tar.gz"
 
 [tool.setuptools]
 packages = ["wikidataloader"]

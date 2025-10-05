@@ -51,4 +51,4 @@ Install using pip:
 ## Limitations
 
 - Does not support recursive queries
-- Does not support labels for Lexeme queries
+- Does not support Senses and Forms for Lexeme queries 
