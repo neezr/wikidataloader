@@ -21,7 +21,7 @@ class WikidataQuery:
         self._df: pd.DataFrame = _df
 
     @classmethod
-    def search(cls, filters: dict, select: list[str, str] | None = None, negative_filters: dict | None = None, required_properties: set | None = None, retrieve_lexicographical_information: bool = False, default_language: str = "[AUTO_LANGUAGE]", limit: int | None = None):
+    def search(cls, filters: dict[str, str], select: list[str, str] | None = None, negative_filters: dict[str, str] | None = None, required_properties: set | None = None, retrieve_lexicographical_information: bool = False, default_language: str = "[AUTO_LANGUAGE]", limit: int | None = None):
         """
         Creates a SPARQL query and creates a WikidataQuery object based on the response from Wikidata.
 
