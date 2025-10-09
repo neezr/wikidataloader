@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wikidataloader"
-version = "0.0.5"
+version = "0.0.6"
 authors = [
   { name="Nizar", email="nizar.neezr@web.de" },
 ]
@@ -13,7 +13,7 @@ keywords = ["datasets", "wikidata", "sparql"]
 readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
     "Intended Audience :: Science/Research",

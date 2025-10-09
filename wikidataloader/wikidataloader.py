@@ -21,20 +21,20 @@ class WikidataQuery:
         self._df: pd.DataFrame = _df
 
     @classmethod
-    def search(cls, filters: dict[str, str], select: list[str, str] | None = None, negative_filters: dict[str, str] | None = None, required_properties: set | None = None, retrieve_lexicographical_information: bool = False, default_language: str = "[AUTO_LANGUAGE]", limit: int | None = None):
+    def search(cls, filters: dict[str, str], select: list[str, str] | None = None, negative_filters: dict[str, str] | None = None, required_properties: set[str] | None = None, retrieve_lexicographical_information: bool = False, default_language: str = "[AUTO_LANGUAGE]", limit: int | None = None):
         """
         Creates a SPARQL query and creates a WikidataQuery object based on the response from Wikidata.
 
         :param filters: Dictionary of properties and the corresponding values that the selected items should have. For example {"P31": "Q3624078", "P30": "Q15"}. Please use the URIs from Wikidata.
-        :param select: List of tuples of properties that should be returned as columns in the DataFrame. The first element of the tuple should be the URI from Wikidata, the second element should be a name for the column. For example: [("P36", "Capital"), ("P37", "Languages"), ("P625", "Coordinates")]. The title/name of the item itself will always be part of the filters and should not be explicitly added here. Default is None.
+        :param select: List of tuples of properties that should be returned as columns in the DataFrame. The first element of the tuple should be the URI from Wikidata, the second element should be a name for the column. For example: [("P36", "Capital"), ("P37", "Languages"), ("P625", "Coordinates")]. The title/name of the item itself will always be part of the filters and should not be explicitly added here. Default is None, which does not select any other features than the item description.
         :param negative_filters: Dictionary of properties and the corresponding values that the selected items should not have. For example {"P31": "Q3624078", "P30": "Q15"}. Please use the URIs from Wikidata. Default is None, which does not exclude any elements.
         :param required_properties: Set of properties retrieved by 'select' that cannot be None. Default is None, which means no property is required.
-        :param retrieve_lexicographical_information: If true, retrieves the lexicographical properties "lemma", "language" and "lexical_category". Only use this, if you expect your data to be Lexemes instead of Items. Default is False.
+        :param retrieve_lexicographical_information: If True, retrieves the lexicographical properties "lemma", "language" and "lexical_category". Only use this, if you expect your data to be Lexemes instead of Items. Default is False.
         :param default_language: Default language for the label service. Default is "[AUTO_LANGUAGE]", which defaults to the language of your operating system.
         :param limit: Maximum number of results. If None, this will return all results. Default is None.
 
-        :returns: cls
-        :raises ValueError: if filters is empty - Wikidata can't parse a query on all objects in the database
+        :returns: new WikidataQuery object
+        :raises ValueError: if filters is empty: Wikidata can't parse a query on all objects in the database.
         """
         if not filters:
             raise ValueError("No features provided for 'filters'.")
@@ -104,7 +104,7 @@ class WikidataQuery:
         Create a WikidataQuery from a predefined query, written in SPARQL.
 
         :param sparql_query: Pre-written SPARQL query string
-        :returns: cls
+        :returns: new WikidataQuery object
         """
         _df = cls._retrieve_from_wikidata(sparql_query)
         return cls(query = sparql_query, _df = _df)
