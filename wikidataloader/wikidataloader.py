@@ -3,6 +3,7 @@ This module provides an easy pythonic wrapper around the Wikidata SPARQL API (ht
 """
 
 import warnings
+import platform
 import re
 import requests
 import pandas as pd
@@ -151,7 +152,7 @@ class WikidataQuery:
         :param sparql_query: Query written in SPARQL
         :returns: result of the Wikidata query, as pandas DataFrame
         """
-        headers = { 'Accept': 'application/sparql-results+json' }
+        headers = {'Accept': 'application/sparql-results+json', 'User-Agent': f'wikidataloader/0.0.6 (https://github.com/neezr/wikidataloader); python/{platform.python_version()}'}
         params = {'query': sparql_query}
         response = requests.get("https://query.wikidata.org/sparql", headers=headers, params=params).json()
 
